@@ -21,12 +21,21 @@ def spell_timer(func: Callable) -> Callable:
 def power_validator(min_power: int) -> Callable:
     def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs) -> Any:
-            if kwargs.get('power', 0) >= min_power:
-                return func(*args, **kwargs)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if "power" in kwargs:
+                power = kwargs["power"]
+            elif args:
+                power = args[-1]
             else:
-                return "Insufficient power for this spell"
+                power = 0
+
+            if power >= min_power:
+                return func(*args, **kwargs)
+
+            return "Insufficient power for this spell"
+
         return wrapper
+
     return decorator
 
 
